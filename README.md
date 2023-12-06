@@ -214,17 +214,17 @@ result    										| List of data frames for each situation containing the 'tru
 
 #### iii. StatisticalMatching_EstimationError
 This function calulates the difference between each simulated distribution and the population distribution. It then returns three statistics:
-1. The Mean Absolute Error (MAE): With $s$ the number of simulated distributions $\hat{y}, ( \hat{y_i}, i = 1, 2, ..., s)$ and $y$ the distribution in the population it is defined as
-   
-   $$ MAE = \frac{1}{s} \sum^{s]_{i=1} | \hat{y_i} - y| $$
-   
-2. The Mean Squared Error (MSE): With $s$ the number of simulated distributions $\hat{y}, ( \hat{y_i}, i = 1, 2, ..., s)$ and $y$ the distribution in the population it is defined as
-   
-   $$ MSE = \frac{1}{s} \sum^{s]_{i=1} (\hat{y_i} - y)^2 $$
-   
-3. The Root Mean Squared Error (RMSE):
-   
-   $$ RMSE = \sqrt{MSE} $$
+- The Mean Absolute Error (MAE): With $s$ the number of simulated distributions $\hat{y}, ( \hat{y_i}, i = 1, 2, ..., s)$ and $y$ the distribution in the population it is defined as
+
+$$ MAE = \frac{1}{s} \sum^{s}_{i=1} | \hat{y_i} - y| $$
+  
+- The Mean Squared Error (MSE): With $s$ the number of simulated distributions $\hat{y}, ( \hat{y_i}, i = 1, 2, ..., s)$ and $y$ the distribution in the population it is defined as
+
+$$ MSE = \frac{1}{s} \sum^{s}_{i=1} (\hat{y_i} - y)^2 $$
+
+- The Root Mean Squared Error (RMSE):
+
+$$ RMSE = \sqrt{MSE} $$
    
 INPUT													| description
 ------------------------------|--------------------------------------------------------------------------------------------
@@ -237,5 +237,32 @@ OUTPUT												| description
 result    										| List of data frames for each situation containing the MAE, MSE and RMSE for each category combination
 
 ### e. Support functions
+#### i. Reverse_OddsRatio
+This function calculates the joint distribution for a given odds ratio. The odds ratio is calculated as $\frac{ad}{bc}$ where:
+
+x \ y     | 1   | 2   | totals
+----------|-----|-----|-----------
+1         | a   | b   | rowtotal_1
+2         | c   | d   | rowtotal_2
+----------|-----|-----|-----------
+totals    | columntotal_1 | columntotal_2 | total
+
+With the row and column totals (marginals) known it is possible to rewrite the equation and solve for e.g. $a$:
+
+$$Odds Ratio = \frac{a * (rowtotal_2 - (columntotal_1 - a))}{(rowtotal_1 - a) * (columntotal_1 -a)}$$
+
+Then we can use the value we found to calculate $b$, $c$, and $d$ and the row and column totals.
+
+**REQUIRED PACKAGES**: stats
+
+INPUT													| description
+------------------------------|--------------------------------------------------------------------------------------------
+rowmarginals  					   | Numeric vector of row marginals (ordered by category, so say you have categories 0 and 1, the first element in the vector should be for 0)
+columnmarginals         | Numeric vector of column marginals (ordered by category, so say you have categories 0 and 1, the first element in the vector should be for 0)
+oddsratio       | Numeric argument indicating the desired odds ratio
+
+OUTPUT												| description
+------------------------------|---------------------------------------------------------------------------------------------
+output    										| Matrix with the frequency table beloning to the given odds ratio (so the values for a, b, c, and d)
 
 ## 4. Example
