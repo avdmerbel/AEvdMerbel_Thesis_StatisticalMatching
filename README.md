@@ -213,9 +213,28 @@ OUTPUT												| description
 result    										| List of data frames for each situation containing the 'true' mean, median, variance and standard deviation for each category combination
 
 #### iii. StatisticalMatching_EstimationError
-This function calculates the absolute difference between simulated estimations and the true population distribution. It then produces three statistics:
-- 
+This function calulates the difference between each simulated distribution and the population distribution. It then returns three statistics:
+1. The Mean Absolute Error (MAE): With $s$ the number of simulated distributions $\hat{y}, ( \hat{y_i}, i = 1, 2, ..., s)$ and $y$ the distribution in the population it is defined as
+   
+   $$ MAE = \frac{1}{s} \sum^{s]_{i=1} | \hat{y_i} - y| $$
+   
+2. The Mean Squared Error (MSE): With $s$ the number of simulated distributions $\hat{y}, ( \hat{y_i}, i = 1, 2, ..., s)$ and $y$ the distribution in the population it is defined as
+   
+   $$ MSE = \frac{1}{s} \sum^{s]_{i=1} (\hat{y_i} - y)^2 $$
+   
+3. The Root Mean Squared Error (RMSE):
+   
+   $$ RMSE = \sqrt{MSE} $$
+   
+INPUT													| description
+------------------------------|--------------------------------------------------------------------------------------------
+simulations  									| Data frame with the estimated joint probabilities from a simulation (output from StatisticalMatching_Simulation)
+variable_combinations         | List of the variable combinations in the order of the estimated probabilities in the simulatins (output from StatisticalMatching_Simulation)
+population_distribution       | List of matrices representing the distribution of the not commonly observed variables in the population (output AggregatedDistribution from GeneratePopulation_...)
 
+OUTPUT												| description
+------------------------------|---------------------------------------------------------------------------------------------
+result    										| List of data frames for each situation containing the MAE, MSE and RMSE for each category combination
 
 ### e. Support functions
 
