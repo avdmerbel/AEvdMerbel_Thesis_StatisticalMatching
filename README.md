@@ -1,14 +1,17 @@
 # Statistical Matching using the Instrumental Variable Assumption
 
 ## 1. Introduction
-The purpose of this project is to evaluate the use of an instrumental variable assumption when statistically matching two data sets. Within this project the focus lies on categorical variables with two categories each, which is the premise the functions outlined below are based on. In section 2 each functions purpose is described. The input arguments and their formats are given and the output is outlined. 
+The purpose of this project is to evaluate the use of an instrumental variable assumption when statistically matching two data sets. Within this project the focus lies on categorical variables with two categories each, which is the premise the functions outlined below are based on. In section 2 each functions purpose is described. The input arguments and their formats are given and the output is outlined. Section 3 includes coding examples of the use of the functions. 
 
 ## 2. Functions
 ### a. Generating data
 #### i. GeneratePopulation_InstrumentalVariable
-This function generates a population distribution under the instrumental variable assumption (conditional independence of the instrumental variable and the outcome, given the mediator). Note: this function uses the Reverse_OddsRatio function detailed in 2e: Support functions.
+This function generates a population distribution under the instrumental variable assumption (conditional independence of the instrumental variable and the outcome, given the mediator). 
 
 **REQUIRED PACKAGES**: dplyr, sampling
+
+**REQUIRED FUNCTIONS**: Reverse_OddsRatio
+
 
 INPUT													| description
 ------------------------------|---------------------------------------------------------------------------------------------
@@ -29,9 +32,12 @@ AggregatedDistribution				| List of data frames with the distribution of the com
 
 
 #### ii. GeneratePopulation_NotInstrumentalVariable
-This function generates a population distribution where the instrumental variable assumption does not hold (conditional independence of the instrumental variable and the outcome, given the mediator). Note: this function uses the Reverse_OddsRatio function detailed in 2e: Support functions.
+This function generates a population distribution where the instrumental variable assumption does not hold (conditional independence of the instrumental variable and the outcome, given the mediator).
 
 **REQUIRED PACKAGES**: dplyr
+
+**REQUIRED FUNCTIONS**: Reverse_OddsRatio
+
 
 INPUT													| description
 ------------------------------|---------------------------------------------------------------------------------------------
@@ -124,8 +130,92 @@ Estimation										| Data frame with the estimated (restricted) probabilities a
 
 
 ### c. Bootstrap
+#### i. StatisticalMatching_Bootstrap
+This function takes a bootstrap sample from the input and estimates the joint distribution of not commonly observed variables. 
+
+**REQUIRED PACKAGES**: _none_
+
+**REQUIRED FUNCTIONS**: EstimateDistribution_InstrumentalVariable, EstimateDistribution_ConditionalIndependence
+
+INPUT													| description
+------------------------------|--------------------------------------------------------------------------------------------
+sample_input									| Data frame with two samples, with one overlapping variable (output of GenerateSample)
+assumption = c("IVA", "CIA")  | String variable indicating under which assumption the estimation is done; instrumental variable or conditional independence
+restriction = FALSE           | Boolean indicating whether the probabilities in the estimation need to be restricted between 0 and 1
+
+
+OUTPUT												| description
+------------------------------|---------------------------------------------------------------------------------------------
+estimated  										| Numeric vector with the bootstrapped estimation of the joint distribution of the not commonly observed variables
+variable_combinations         | Data frame with the category combinations in the same order as the estimated values (for reference)
+
+#### ii. StatisticalMatching_BootstrapParameters
+This function estimates the mean, median, variance and standard deviation of the bootstrap estimations calculated using StatisticalMatching_Bootstrap. These parameters are calculated for each category combination separately. Below an example for three bootstrap samples:
+
+variable X | variable Y | Bootstrap 1 | Bootstrap 2 | Bootstrap 3 | mean | median | variance | standard deviation
+-----------|------------|-------------|-------------|-------------|------|--------|----------|--------------------
+1          | 1          | .3          | .25         | .31         | .287 | .3     | .001     | .0321
+1          | 2          | .03         | .04         | .04         | .037 | .04    | < .0001  | .0058
+2          | 1          | .09         | .11         | .07         | .09  | .09    | < .0001  | .02
+2          | 2          | .58         | .60         | .58         | .587 | .58    | .0001    | .012
+
+**REQUIRED PACKAGES**: _none_
+
+**REQUIRED FUNCTIONS**: GenerateSample, EstimateDistribution_InstrumentalVariable, EstimateDistribution_ConditionalIndependece 
+
+
+INPUT													| description
+------------------------------|--------------------------------------------------------------------------------------------
+bootstraps  									| Data frame with the bootstrapped estimations of the joint distribution (output of StatisticalMatching_Bootstrap
+variable_combinations         | Data frame with the variable combinations used in estimating the bootstraps (output of StatisticalMatching_Bootstrap)
+
+
+OUTPUT												| description
+------------------------------|---------------------------------------------------------------------------------------------
+result    										| List with a data frame for each statistical matching situation with the category combinations and their mean, median, variance and standard deviation
+
 
 ### d. Simulation
+#### i. StatisticalMatching_Simulation
+This function estimates the joint distribution from a sample simulated form the population. 
+
+**REQUIRED PACKAGES**: _none_
+
+**REQUIRED FUNCTIONS**: GenerateSample, EstimateDistribution_InstrumentalVariable, EstimateDistribution_ConditionalIndependece 
+
+INPUT													| description
+------------------------------|--------------------------------------------------------------------------------------------
+population  									| Data frame with the population you want to simulate from (output FullPopulation from GeneratePopulation_...)
+assumption  = c("IVA", "CIA") | String variable indicating under which assumption to estimate the joint probability, instrumental variable or conditional independence
+restriction = FALSE           | Boolean indicating whether to restrict the probabilities between 0 and 1
+situations  = c("instrumental", "mediator", "outcome") | String variable indicating for which situation you want to simulate, common instrumental, mediator or outcome (all by default)
+n1          = 2000            | Numeric variable indicating the desired sample size of the first sample
+n2          = 2000            | Numeric variable indicating the desired sample size of the second sample
+
+
+OUTPUT												| description
+------------------------------|---------------------------------------------------------------------------------------------
+estimated  										| List of numeric vectors for each situation containing the estimated joint probabilities for all variable combinations
+variable_combinations         | List of the variable combinations in the order of the estimated probabilities (for reference)
+
+#### ii. StatisticalMatching_TrueParameters
+This function calculates from simulated estimations the estimated 'true' mean, median, variance and standard deviation. This is done in the same way as in the Bootstrap functions, for each category combination. 
+
+**REQUIRED PACKAGES**: _none_
+
+INPUT													| description
+------------------------------|--------------------------------------------------------------------------------------------
+simulations  									| Data frame with the estimated joint probabilities from a simulation (output from StatisticalMatching_Simulation)
+variable_combinations         | List of the variable combinations in the order of the estimated probabilities in the simulatins (output from StatisticalMatching_Simulation)
+
+OUTPUT												| description
+------------------------------|---------------------------------------------------------------------------------------------
+result    										| List of data frames for each situation containing the 'true' mean, median, variance and standard deviation for each category combination
+
+#### iii. StatisticalMatching_EstimationError
+This function calculates the absolute difference between simulated estimations and the true population distribution. It then produces three statistics:
+- 
+
 
 ### e. Support functions
 
