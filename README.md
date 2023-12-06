@@ -242,10 +242,9 @@ This function calculates the joint distribution for a given odds ratio. The odds
 
 x \ y     | 1   | 2   | totals
 ----------|-----|-----|-----------
-1         | a   | b   | rowtotal_1
-2         | c   | d   | rowtotal_2
-----------|-----|-----|-----------
-totals    | columntotal_1 | columntotal_2 | total
+1         | a   | b   | $rowtotal_1$
+2         | c   | d   | $rowtotal_2$
+totals    | $columntotal_1$ | $columntotal_2$ | total
 
 With the row and column totals (marginals) known it is possible to rewrite the equation and solve for e.g. $a$:
 
