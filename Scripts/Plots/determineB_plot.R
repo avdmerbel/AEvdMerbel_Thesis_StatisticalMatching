@@ -1,5 +1,6 @@
 options(scipen = 0)
-setwd("F:/Documents/Thesis_StatisticalMatching/R/DetermineB")
+
+#setwd("/.Data/DetermineB")
 
 
 library(ggplot2)
@@ -45,9 +46,9 @@ common_mediator =
 common_outcome = 
   as.data.frame(bias_perSit_perM$CommonOutcome) %>% melt(id.vars = c("var.instrumental", "var.mediator"))
 
-instrumental = aggregate(value ~ variable, common_instrumental, mean)
-outcome = aggregate(value ~ variable, common_outcome, mean)
-mediator = aggregate(value ~ variable, common_mediator, mean)
+instrumental = aggregate(value ~ variable, common_instrumental, FUN = function(x) mean(abs(x)))
+outcome = aggregate(value ~ variable, common_outcome, FUN = function(x) mean(abs(x)))
+mediator = aggregate(value ~ variable, common_mediator, FUN = function(x) mean(abs(x)))
 
 # plots
 
@@ -75,8 +76,7 @@ common_instrumental_plot =
   labs(subtitle = "Common Instrumental",
        x = "Number of bootstraps",
        y = "Bias") +
-  scale_y_continuous(limits = c(-4*1e-17, 4*1e-17),
-                     breaks = c(-4*1e-17, 0, 4*1e-17)) +
+  scale_y_continuous(limits = c(.126, .129)) +
   general
 
 
@@ -90,8 +90,7 @@ common_mediator_plot =
   labs(subtitle = "Common Mediator",
        x = "Number of bootstraps",
        y = "Bias")+
-  scale_y_continuous(limits = c(-4*1e-17, 4*1e-17),
-                     breaks = c(-4*1e-17, 0, 4*1e-17)) +
+  scale_y_continuous(limits = c(.131, .134)) +
   general
 
 
@@ -105,8 +104,7 @@ common_outcome_plot =
   labs(subtitle = "Common Outcome",
        x = "Number of bootstraps",
        y = "Bias")+
-  scale_y_continuous(limits = c(-1*1e-17, 1*1e-17),
-                     breaks = c(-1*1e-17, 0, 1*1e-17))+
+  scale_y_continuous(limits = c(.045, .06)) +
   general
 
  common_mediator_plot / common_outcome_plot / common_instrumental_plot 

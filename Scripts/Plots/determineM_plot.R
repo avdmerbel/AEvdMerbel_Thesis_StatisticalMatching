@@ -5,7 +5,7 @@ library(reshape2)
 library(ggplot2)
 library(patchwork)
 
-setwd("F:/Documents/Thesis_StatisticalMatching/R/DetermineM")
+#setwd("./Data/DetermineM")
 
 res10 = readRDS("res10.RData")
 res50 = readRDS("res50.RData")
@@ -68,9 +68,9 @@ general =
              text = element_text(family = "Times")))
 
 
-instrumental = aggregate(value ~ variable, common_instrumental, mean)
-outcome = aggregate(value ~ variable, common_outcome, mean)
-mediator = aggregate(value ~ variable, common_mediator, mean)
+instrumental = aggregate(value ~ variable, common_instrumental, FUN = function(x) mean(abs(x)))
+outcome = aggregate(value ~ variable, common_outcome, FUN = function(x) mean(abs(x)))
+mediator = aggregate(value ~ variable, common_mediator, FUN = function(x) mean(abs(x)))
 
 common_instrumental_plot = 
   ggplot(instrumental,
@@ -82,8 +82,7 @@ common_instrumental_plot =
   labs(subtitle = "Common Instrumental",
        x = "Number of simulations",
        y = "Bias") +
-  scale_y_continuous(limits = c(-4*1e-17, -1*1e-17),
-                     breaks = c(-4*1e-17, -2.5*1e-17, -1*1e-17)) +
+  scale_y_continuous(limits = c(0.04, 0.06)) +
   general
 
 
@@ -97,8 +96,7 @@ common_outcome_plot =
   labs(subtitle = "Common Outcome",
        x = "Number of simulations",
        y = "Bias") +
-  scale_y_continuous(limits = c(-2*1e-17, -1*1e-18),
-                     breaks = c(-2*1e-17, -1*1e-17, -1*1e-18)) +
+  scale_y_continuous(limits = c(0.03, 0.05)) +
   general
 
 common_mediator_plot = 
@@ -111,8 +109,7 @@ common_mediator_plot =
   labs(subtitle = "Common Mediator",
        x = "Number of simulations",
        y = "Bias")  +
-  scale_y_continuous(limits = c(-2*1e-17, 1*1e-17),
-                     breaks = c(-2*1e-17, -.5*1e-17, 1*1e-17)) +
+  scale_y_continuous(limits = c(0.01, 0.02)) +
   general
 
 
